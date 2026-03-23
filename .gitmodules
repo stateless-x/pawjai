@@ -3,18 +3,18 @@
 	url = https://github.com/stateless-x/pawjai-be.git
 	branch = main
 	update = rebase
-[submodule "pawjai-client"]
-	path = pawjai-client
-	url = https://github.com/stateless-x/pawjai-client.git
-	branch = main
-	update = rebase
 [submodule "pawjai-admin"]
 	path = pawjai-admin
 	url = https://github.com/stateless-x/pawjai-admin.git
 	branch = main
 	update = rebase
-[submodule "PawjaiMobile"]
-	path = PawjaiMobile
-	url = https://github.com/stateless-x/PawjaiMobile.git
+[submodule "pawjai-fe"]
+	path = pawjai-fe
+	url = https://github.com/stateless-x/pawjai-fe.git
+	branch = main
+	update = rebase
+[submodule "pawjai-ios"]
+	path = pawjai-ios
+	url = https://github.com/stateless-x/pawjai-ios.git
 	branch = main
 	update = rebase

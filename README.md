@@ -9,9 +9,9 @@ This repo is the central navigator. Each service lives in its own repository wit
 | Repo | What it does | Port |
 |---|---|---|
 | [pawjai-be](https://github.com/stateless-x/pawjai-be) | REST API. Pets, health records, subscriptions, AI chat. | 4000 |
-| [pawjai-client](https://github.com/stateless-x/pawjai-client) | Web app. The user-facing product. | 3000 |
+| [pawjai-fe](https://github.com/stateless-x/pawjai-fe) | Web app. The user-facing product. | 3000 |
 | [pawjai-admin](https://github.com/stateless-x/pawjai-admin) | Admin dashboard. Ops, analytics, content management. | 3001 |
-| [PawjaiMobile](https://github.com/stateless-x/PawjaiMobile) | iOS app. A native shell that wraps the web client. | n/a |
+| [pawjai-ios](https://github.com/stateless-x/pawjai-ios) | iOS app. A native shell that wraps the web client. | n/a |
 
 ## How the system fits together
 
