@@ -25,7 +25,34 @@ The backend is the single source of truth. Web and mobile both depend on it. The
 
 ## Running locally
 
-If you need the full system running on your machine, start in this order.
+### Prerequisites
+
+- [OrbStack](https://orbstack.dev) — runs the local PostgreSQL database (lightweight Docker for Mac)
+
+### 1. Start the database
+
+The shared database config lives at `~/dev/docker-compose.yml`. Run once (OrbStack auto-starts on login after that):
+
+```bash
+cd ~/dev
+docker compose up -d
+```
+
+This starts PostgreSQL 16 on `localhost:5432` with `pawjai_dev` pre-created.
+
+Use this connection string in `pawjai-be/.env`:
+```
+DATABASE_URL="postgresql://dev:dev@localhost:5432/pawjai_dev"
+```
+
+Useful commands:
+```bash
+docker compose up -d    # start
+docker compose down     # stop
+docker ps               # check running containers
+```
+
+### 2. Start services in order
 
 1. Backend first. Nothing else works without it.
 2. Web client. Depends on the backend.
