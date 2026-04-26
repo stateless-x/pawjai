@@ -18,3 +18,8 @@
 	url = https://github.com/stateless-x/pawjai-ios.git
 	branch = main
 	update = rebase
+[submodule "pawjai-android"]
+	path = pawjai-android
+	url = https://github.com/stateless-x/pawjai-android.git
+	branch = main
+	update = rebase
