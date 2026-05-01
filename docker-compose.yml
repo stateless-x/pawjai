@@ -1,0 +1,90 @@
+name: pawjai
+
+services:
+  pawjai-be:
+    container_name: pawjai-be
+    build:
+      context: ./pawjai-be
+      dockerfile: Dockerfile.dev
+    image: pawjai-be:dev
+    env_file:
+      - ./pawjai-be/.env.dev
+    environment:
+      PORT: "4000"
+      NODE_ENV: development
+      SKIP_MIGRATIONS: "true"
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./pawjai-be:/app
+      - pawjai-be-node_modules:/app/node_modules
+      - ./keys:/keys:ro
+    restart: unless-stopped
+    profiles:
+      - dev
+      - admin
+    healthcheck:
+      test: ["CMD-SHELL", "bun -e \"fetch('http://localhost:4000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+  pawjai-fe:
+    container_name: pawjai-fe
+    build:
+      context: ./pawjai-fe
+      dockerfile: Dockerfile.dev
+    image: pawjai-fe:dev
+    env_file:
+      - ./pawjai-fe/.env.dev
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./pawjai-fe:/app
+      - pawjai-fe-node_modules:/app/node_modules
+      - pawjai-fe-next:/app/.next
+    depends_on:
+      pawjai-be:
+        condition: service_started
+    restart: unless-stopped
+    profiles:
+      - dev
+
+  pawjai-admin:
+    container_name: pawjai-admin
+    build:
+      context: ./pawjai-admin
+      dockerfile: Dockerfile.dev
+    image: pawjai-admin:dev
+    env_file:
+      - ./pawjai-admin/.env.dev
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./pawjai-admin:/app
+      - pawjai-admin-node_modules:/app/node_modules
+      - pawjai-admin-next:/app/.next
+    depends_on:
+      pawjai-be:
+        condition: service_started
+    restart: unless-stopped
+    profiles:
+      - admin
+
+volumes:
+  pawjai-be-node_modules:
+  pawjai-fe-node_modules:
+  pawjai-fe-next:
+  pawjai-admin-node_modules:
+  pawjai-admin-next:

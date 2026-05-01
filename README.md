@@ -12,55 +12,92 @@ This repo is the central navigator. Each service lives in its own repository wit
 | [pawjai-fe](https://github.com/stateless-x/pawjai-fe) | Web app. The user-facing product. | 3000 |
 | [pawjai-admin](https://github.com/stateless-x/pawjai-admin) | Admin dashboard. Ops, analytics, content management. | 3001 |
 | [pawjai-ios](https://github.com/stateless-x/pawjai-ios) | iOS app. A native shell that wraps the web client. | n/a |
+| [pawjai-android](https://github.com/stateless-x/pawjai-android) | Android app. Native shell that wraps the web client. | n/a |
 
 ## How the system fits together
 
 ```
-iOS App  ──WebView──▶  Web Client  ──API──▶  Backend  ──▶  PostgreSQL
-                                                       ──▶  Supabase (auth)
-                                                       ──▶  Stripe (payments)
+iOS / Android  ──WebView──▶  Web Client  ──API──▶  Backend  ──▶  PostgreSQL
+                                                            ──▶  Supabase (auth)
+                                                            ──▶  Stripe (payments)
 ```
 
-The backend is the single source of truth. Web and mobile both depend on it. The iOS app is not a standalone app — it wraps the web client through a WebView bridge.
+The backend is the single source of truth. Web and mobile both depend on it. The mobile apps are not standalone, they wrap the web client through a WebView bridge.
 
-## Running locally
+---
+
+## Running locally (the easy way)
+
+A single script `pawjai.sh` orchestrates everything via Docker (OrbStack on macOS). All local dev points at the **staging Railway database** and **staging Supabase project**, so you never touch prod data while developing.
 
 ### Prerequisites
 
-- [OrbStack](https://orbstack.dev) — runs the local PostgreSQL database (lightweight Docker for Mac)
+- [OrbStack](https://orbstack.dev) (recommended on macOS) or Docker Desktop
+- All submodules cloned: `git submodule update --init --recursive`
 
-### 1. Start the database
-
-The shared database config lives at `~/dev/docker-compose.yml`. Run once (OrbStack auto-starts on login after that):
+### One-time setup
 
 ```bash
-cd ~/dev
-docker compose up -d
+./pawjai.sh setup
 ```
 
-This starts PostgreSQL 16 on `localhost:5432` with `pawjai_dev` pre-created.
+This copies `.env.dev.example` to `.env.dev` in each of `pawjai-be`, `pawjai-fe`, `pawjai-admin`. The templates already include staging Supabase keys and Stripe **test** keys. Open each file and fill in any extras you need (Bunny, Mixpanel, etc.).
 
-Use this connection string in `pawjai-be/.env`:
-```
-DATABASE_URL="postgresql://dev:dev@localhost:5432/pawjai_dev"
-```
+### Daily use
 
-Useful commands:
 ```bash
-docker compose up -d    # start
-docker compose down     # stop
-docker ps               # check running containers
+./pawjai.sh dev      # web app + backend     => :3000 / :4000
+./pawjai.sh admin    # admin app + backend   => :3001 / :4000
+./pawjai.sh stop     # stop everything
+./pawjai.sh logs     # tail all logs
+./pawjai.sh logs pawjai-be   # tail one service
+./pawjai.sh status   # what's running
+./pawjai.sh restart  # bounce containers
+./pawjai.sh rebuild dev      # nuke caches and rebuild images
+./pawjai.sh help     # show all commands
 ```
 
-### 2. Start services in order
+`Ctrl-C` from `dev` or `admin` stops the containers cleanly. Source code on the host is bind-mounted into the containers, so editing files triggers hot reload (HMR for Next.js, `bun --watch` for the backend).
 
-1. Backend first. Nothing else works without it.
-2. Web client. Depends on the backend.
-3. Admin. Depends on the backend.
-4. iOS. Depends on the web client being reachable.
+### What it actually runs
 
-Each repo's README has its own quickstart instructions.
+- `docker-compose.yml` defines three services with two profiles (`dev`, `admin`).
+- `pawjai-be` runs in **both** profiles, it's the shared backend.
+- `pawjai-fe` runs only in profile `dev`; `pawjai-admin` only in `admin`.
+- Each service has a `Dockerfile.dev` (Bun-based, dev-mode only) in its own repo.
+- `node_modules` and `.next` live in named volumes, not on the host. Keeps macOS file-watching fast.
+
+### What you can still do without the script
+
+Each submodule still has its own `README.md` and runs standalone with `bun install && bun run dev`. The script doesn't replace that, it just removes the "open three terminals and start things in the right order" tax.
+
+---
+
+## Running locally (the manual way)
+
+If you'd rather run services on the host without Docker, follow each repo's quickstart in order:
+
+1. **Backend first.** Nothing else works without it.
+2. **Web client.** Depends on the backend.
+3. **Admin.** Depends on the backend.
+4. **iOS / Android.** Depends on the web client being reachable.
+
+You'll need a Postgres available locally too. The shared OrbStack config at `~/dev/docker-compose.yml` provides one on `localhost:5432`:
+
+```bash
+cd ~/dev && docker compose up -d
+```
+
+Then point `pawjai-be/.env.local` at it (`postgresql://dev:dev@localhost:5432/pawjai_dev`) or at your Railway staging DB.
+
+---
 
 ## Stack
 
-Bun · Fastify · Next.js · SwiftUI · PostgreSQL · Drizzle ORM · Supabase · Stripe
+Bun · Fastify · Next.js · SwiftUI · Kotlin · PostgreSQL · Drizzle ORM · Supabase · Stripe
+
+## Deployment
+
+Backend goes to Railway. Web client and admin go to Vercel. iOS goes to TestFlight / App Store. Android goes to Play Console.
+
+Each service's repo owns its deploy config. Local dev (this script) is intentionally decoupled from how things ship to prod.
