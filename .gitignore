@@ -3,3 +3,4 @@ keys/
 .claude/
 mockup-dashboard.html
 .DS_Store
+test.sh
