@@ -4,3 +4,4 @@ keys/
 mockup-dashboard.html
 .DS_Store
 test.sh
+output/imagegen/
