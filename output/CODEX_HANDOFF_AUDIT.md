@@ -363,3 +363,18 @@ This document is the running record of the Claude-orchestrated period. It is upd
 5. **Lesson codified.** `output/ORCHESTRATOR_HANDOFF.md` protocol section: new RUNTIME GATE rule (any always-mounted-surface change needs a real browser pass, not just static gates) and the Zustand v5 selector-stability trap added to the traps list. `output/item6-progressive-logger-plan.md` §8 updated with the same as a repo-wide lesson.
 
 Current prod/staging heads after the reland: fe `main` == `staging` == `9ea74e1`, parent `47d6949`; version stays 1.8.0 (user's explicit call — no bump for an incident fix within the same release), no new tag. Roadmap item 6 (progressive logger) v1 back in staging/main as of the reland — identity-only shortcuts built on item 5's RESOLUTION_METADATA_KEYS classification (fe-local mirror, one-way lockstep comment; reciprocal be comment is a queued fast-follow), recents/pins/log-again UI, design-guide additions user-approved; still awaiting the user's browser confirmation that prod is healthy post-deploy. Item 7 stays parked; the daily-limit + share-token decisions are settled-in-principle inside the ON-HOLD pricing-model prep packet in output/.
+
+---
+
+## 2026-08-18 evening addendum — the chat-write day (verify against git)
+
+Shipped to prod at the user's direct release cadence (be/fe heads joined throughout):
+- **R2 receipt trust hardening**: be #268 (read-time `status:'deleted'` stamping in the historical-receipt resolver — receipts can never claim a dead record is saved) + fe #302 (inline undo via soft-delete w/ idempotent double-tap, 2-min duplicate guard cleared on undo, pet-identity prominence, per-send idempotency-key passthrough).
+- **typeId enum (be #267): shipped to prod and REVERTED same day (`10ea791`).** Deterministic empty-Gemini responses on record-write turns began at the enum's deploy; the second incident went double-empty through the fresh silent-retry — identical input failing twice in 1.3s = input problem, prime suspect the ~48-UUID enum (+ prose asymmetry). Re-landing gated on: finish-reason logging on empty responses, R1.2 prose widening, and a LIVE-GEMINI eval before deploy. Lesson: model-facing schema changes need a live-model gate, exactly as UI needed rule 9's browser gate — schema-conversion tests passed while the real model choked.
+- **Silent retry on empty Gemini responses (be #269, KEPT)**: one retry, only when zero chunks yielded; double-empty falls back as before; retry/recovery rates observable in logs.
+- **Chat message length bounds: 3..1000 → 1..4000**, both repos in lockstep (short Thai replies bounced with a swallowed 400; pasted vet reports were silently sliced to 1000 chars — Pepe answered on truncated medical info).
+- Ticketed, not built: fe surfaces a generic apology instead of the backend's specific 400 rejection text; `record_undo` analytics event; enum re-landing conditions above.
+
+- **Ad-hoc roadmap item added (user request): timeline & /pet viewing UX.** 7-agent study (3 personas + 4 experts) completed 2026-08-18; plan at `output/timeline-pet-improvement-plan-2026-08-18.md`. Scope: the two pages only (user decision). 14 confirmed defects incl. blind delete dialog (no pet identity), photos never rendered in read path, silent deep-link dead-end (shipped `/records/:id` endpoint unused), nullable-`occurredAt` NULLS FIRST sort bug, broken window-virtualizer `scrollMargin`, and a race that silently removes "Log again". Parked out-of-scope in its Appendix B: `vibe` mood rating rendered as "Severity" to vets on the share screen (SAFETY, recommend early standalone fix). No code changed yet.
+
+**Last updated:** 2026-08-18 evening. Current heads: be master==staging `d6e5aa8a`, fe main==staging `58854e0`, parent `cd1cd2c`.
