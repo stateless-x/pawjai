@@ -1,0 +1,64 @@
+
+=== Phase 2.4 catalog content rollout (DRY RUN) ===
+
+Concepts to create:        6
+Translations to create:    12
+Variants to create:        8
+Variant icon fixes:        1
+Concept sortOrder fixes:   12
+
+Concepts that would be created:
+  - activity.drinking              (activity) vetVisible=true sortOrder=2
+  - symptom.breathing_change       (symptom) vetVisible=true sortOrder=4
+  - activity.other                 (activity) vetVisible=false sortOrder=13
+  - symptom.other                  (symptom) vetVisible=true sortOrder=9
+  - vet_visit.other                (vet_visit) vetVisible=true sortOrder=7
+  - medication.other               (medication) vetVisible=true sortOrder=5
+
+Translations that would be created:
+  - activity.drinking              [en] "Drinking"
+  - activity.drinking              [th] "ดื่มน้ำ"
+  - symptom.breathing_change       [en] "Breathing change"
+  - symptom.breathing_change       [th] "หายใจต่างจากปกติ"
+  - activity.other                 [en] "Other activity"
+  - activity.other                 [th] "กิจกรรมอื่นๆ"
+  - symptom.other                  [en] "Other symptom"
+  - symptom.other                  [th] "อาการอื่นๆ"
+  - vet_visit.other                [en] "Other vet visit"
+  - vet_visit.other                [th] "การพบสัตวแพทย์อื่นๆ"
+  - medication.other               [en] "Other medication"
+  - medication.other               [th] "ยาอื่นๆ"
+
+Variants that would be created:
+  - activity.drinking              (dog) "Drinking" / "ดื่มน้ำ"
+  - activity.drinking              (cat) "Drinking" / "ดื่มน้ำ"
+  - symptom.breathing_change       (dog) "Breathing change" / "หายใจต่างจากปกติ"
+  - symptom.breathing_change       (cat) "Breathing change" / "หายใจต่างจากปกติ"
+  - activity.other                 (null) "Other activity" / "กิจกรรมอื่นๆ"
+  - symptom.other                  (null) "Other symptom" / "อาการอื่นๆ"
+  - vet_visit.other                (null) "Other vet visit" / "การพบสัตวแพทย์อื่นๆ"
+  - medication.other               (null) "Other medication" / "ยาอื่นๆ"
+
+Variant icon fixes that would be applied:
+  - variant 0f89d110-28c6-43e6-96fb-4c3ea4c89660: iconUrl was "https://pawjai.b-cdn.net/WebAssets/Lookups/Vet-visit/follow-up.webp" (likely borrowed from vet_visit.follow_up) -- correcting to its own artwork
+      -> https://pawjai.b-cdn.net/WebAssets/Lookups/Vet-visit/routine-checkup.webp
+
+Concept sortOrder fixes that would be applied:
+  - symptom.lethargy               sortOrder 6 -> 7
+  - symptom.coughing               sortOrder 4 -> 5
+  - activity.urination             sortOrder 2 -> 3
+  - activity.rest                  sortOrder 4 -> 5
+  - activity.socialization         sortOrder 7 -> 8
+  - activity.play                  sortOrder 5 -> 6
+  - activity.enrichment            sortOrder 10 -> 11
+  - activity.grooming              sortOrder 6 -> 7
+  - symptom.excessive_scratching_grooming sortOrder 7 -> 8
+  - activity.walk                  sortOrder 8 -> 9
+  - activity.training              sortOrder 9 -> 10
+  - activity.bowel_movement        sortOrder 3 -> 4
+
+Reviewed plan fingerprint: sha256:d61ec934f2e4107d922d1f600f1867e781e5efbeead36047383f7f7e0809c817
+
+Dry run only -- no writes made. To apply, copy the fingerprint above from THIS reviewed dry-run and pass it explicitly:
+  bun run scripts/rollout-catalog-content.ts --apply --expected-plan-fingerprint=sha256:d61ec934f2e4107d922d1f600f1867e781e5efbeead36047383f7f7e0809c817
+
