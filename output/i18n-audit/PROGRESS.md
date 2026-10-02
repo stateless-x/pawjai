@@ -70,3 +70,12 @@ be-verify agent ran bare `bun test` (not ./scripts/test.sh) with pawjai-be `.env
 3. Only then `bun run db:apply-trigger` (railway `-e` pinned). Trigger first + old backend = new users stuck `en`/unseeded.
 4. Migration number clash: snooze-drop branch (pawjai-be-wt-snooze) also has 0128; renumber whichever merges second.
 - admin: `bun run lint` broken on base (Next 16 removed `next lint`; legacy .eslintrc.json under eslint 9). Pre-existing, not fixed.
+
+## Shared negotiation vectors (PLAN §2 acceptance)
+`locale-vectors.json` byte-identical (sha256 79d83f9b...) with a pinned-hash test in be (source), fe `feee3c6` (fixed drift: malformed q treated as 0, now 1), public `ab02e99`, RN `c319e55`.
+
+## Final be regression (after all packets)
+Same fake env both sides: origin/staging 10 fail / branch 10 fail, identical set (Supabase JWT suites, fake URL). Branch-only failures: 0. Comment-path fix `1de90b5`.
+
+## Open product decision
+G1 machine drafts (`needs_review`) ARE served to end users: no user-facing read path filters review_status (resolveTranslation.ts:55-80, breedNames.ts:41-44, catalogService.ts:88-95, notificationContentReader.ts:65-71). Nothing is exposed until the owner runs `i18n:gap-fill --apply`. Decide before running it: serve drafts (better than fallback language) or hide until approved (4 read paths).
