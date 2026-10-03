@@ -178,10 +178,13 @@ Done and verified:
 - Clients on `feat/cdn-static-assets` worktrees, unpushed: fe (`pawjai-fe-wt-cdn`: build, tsc, 473 tests pass; 18 dead public files removed; photo downscale before upload), public (`pawjai-public-wt-cdn`: astro check, 71 tests, build pass), RN (`pawjai-react-native-wt-cdn`: typecheck, lint, 1023 tests pass).
 - pawjai-be `feat/storage-hygiene` (`pawjai-be-wt-storage`, 2 commits): owner-scoped layout; scoped deletes close the cross-user delete; avatar upload deletes the old file; pet, account and blog deletes sweep directories with a by-URL fallback; failed chat turns delete their uploads; blog uploads re-encoded (EXIF stripped). tsc, build:ts, db:validate, 1331 unit tests pass; full Docker suite has no new failures vs origin/staging (43 pre-existing: JWT, breeds, migration 0130).
 
+Done 2026-10-03 (owner-approved):
+- Live test: Bunny trailing-slash DELETE is recursive (nested scratch dir gone after deleteDirectory).
+- Deleted 19 stale placeholders under static/records/ and the 4 old default dog/cat avatars in WebAssets/pet-avatar/.
+- Orphan report (refs unioned from prod, staging and local; local .env.local points at the prod DB): deleted 31 orphaned pet avatars (0.82 MB, older than 24 h, scope-checked). Left: 67 orphaned chat images (7.3 MB), 1 broken blog featured_image_url (pre-existing).
+
 Waiting on the owner (see final report for the approval batch):
 - Purge 4 overwritten URLs at the edge before any client ships.
-- Live check that Bunny directory delete is recursive (unit-tested only).
-- Delete 19 stale placeholder files at future real-art paths under `static/records/`.
 - DB: icon migration dry run (staging, then prod), and a prod read for the orphan report.
 - Self-service delete-account policy; chat image retention policy.
 - `scripts/hard-delete-user.ts` already broken on staging (dropped tables `admin_emails`, `user_personalization`): separate fix.
