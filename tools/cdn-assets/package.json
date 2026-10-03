@@ -1,0 +1,16 @@
+{
+  "name": "pawjai-cdn-assets",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "pull-legacy": "bun src/pull-legacy.ts",
+    "build": "bun src/build.ts",
+    "upload": "bun src/upload.ts",
+    "codegen": "bun src/codegen.ts",
+    "check": "bun src/codegen.ts --check",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "sharp": "^0.34.0"
+  }
+}
