@@ -17,6 +17,7 @@ static/records/types/             activity, symptom, medication, vet-visit
 static/records/{activity,symptom,medication,vet-visit}/   one file per catalog concept, -dog/-cat when art differs
 static/marketing/{home,about,stickers,blog}/
 static/ads/{upgrade,partners/*}/
+static/placeholders/              stand-in art until real art exists (separate URLs on purpose)
 static/_source/                   originals the outputs were built from (never referenced by apps)
 WebAssets/, ads/                  LEGACY, read-only, kept until Bunny stats show no traffic
 ```
@@ -37,11 +38,21 @@ bun run check              # exit 1 if any generated file is stale
 The env file is process input only: never print or inspect it. `codegen` accepts
 `--fe= --public= --rn= --be=` to target worktrees.
 
-**Replace a placeholder or redraw art:** drop the file at `source/<path without extension>.<png|webp|jpg|svg>`
-(for example `source/static/records/activity/bathing.png`), then build and upload. Same URL,
-no code change. Overwritten paths stay cached at the edge until purged: set
-`BUNNY_ACCOUNT_API_KEY` (account key, not the storage key) and upload purges them, or purge
-the printed URLs in the Bunny dashboard.
+**Caching rule that drives everything below:** Bunny serves `cache-control: max-age=25600000`
+(~296 days). A purge clears Bunny's edge, never a browser. So never overwrite a URL a client
+has already loaded: new art goes to a new URL.
+
+**Art for a placeholder:** placeholders live under `static/placeholders/`. Remove
+`placeholder` from the manifest entry and give it a source (`from`, `file`, or a file at
+`source/<real path without extension>.<png|webp|jpg|svg>`). Build, upload, run codegen, ship
+the apps, then run pawjai-be `scripts/migrate-record-type-icons.ts`, which moves DB rows from
+the placeholder URL to the real one.
+
+**Redraw existing art:** give it a new filename in the manifest (for example `walk-v2.webp`),
+then the same build, upload, codegen, ship, migrate steps. Uploading over an existing path
+updates storage but leaves old bytes at the edge until purged: set `BUNNY_ACCOUNT_API_KEY`
+(account key, not the storage key) and upload purges updated paths, or purge the printed
+URLs in the Bunny dashboard.
 
 **Add a new asset:** add an entry to `src/manifest.ts` (`keys` = the exported constant names),
 build, upload, codegen, then commit the regenerated files in each app.

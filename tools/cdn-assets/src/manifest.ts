@@ -7,9 +7,13 @@
 // generated constants files in pawjai-fe, pawjai-public and
 // pawjai-react-native, so call sites keep their existing names.
 //
-// New art: drop a file at `source/<to without extension>.<png|webp|jpg|svg>`
-// and rerun build + upload. It replaces a placeholder or legacy source with no
-// code change.
+// Redrawn art for an existing asset: drop a file at
+// `source/<to without extension>.<png|webp|jpg|svg>` and rerun build + upload.
+// Because browsers cache static/ for ~296 days, prefer a new filename for a
+// visible redraw (change `to`, run codegen, deploy) over overwriting a path.
+// Art for a placeholder: remove `placeholder`, give it a `from`/`file` or a
+// source/ file at its real static/records path, then codegen + the be
+// icon migration move every reference to the new URL.
 
 export const CDN_BASE_URL = "https://pawjai.b-cdn.net";
 export const CDN_HOST = "pawjai.b-cdn.net";
@@ -55,8 +59,12 @@ function record(
   name: string,
   opts: { from?: string; keys: string[] } | { placeholder: true; keys: string[] },
 ): Asset {
+  // Placeholders live under static/placeholders/ so real art arrives at a
+  // NEW url: browsers cache these for ~296 days, so overwriting the same
+  // path would leave devices on the placeholder long after the art ships.
+  const dir = "placeholder" in opts ? "static/placeholders/records" : "static/records";
   return {
-    to: `static/records/${type}/${name}.webp`,
+    to: `${dir}/${type}/${name}.webp`,
     size: "icon",
     ...("from" in opts && opts.from ? { from: opts.from } : {}),
     ...("placeholder" in opts ? { placeholder: true as const } : {}),

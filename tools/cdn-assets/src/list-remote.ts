@@ -10,7 +10,7 @@ if (!zone || !key) {
   process.exit(2);
 }
 const root = process.argv[2] ?? "WebAssets/";
-const covered = new Set(ASSETS.flatMap((a) => [...(a.from ? [decodeURIComponent(a.from)] : []), ...(a.alsoAt ?? [])]));
+const covered = new Set(ASSETS.flatMap((a) => [a.to, ...(a.from ? [decodeURIComponent(a.from)] : []), ...(a.alsoAt ?? [])]));
 
 type Obj = { ObjectName: string; Path: string; IsDirectory: boolean; Length: number };
 async function walk(dir: string): Promise<{ path: string; bytes: number }[]> {

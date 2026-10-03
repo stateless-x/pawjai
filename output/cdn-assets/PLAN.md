@@ -172,16 +172,18 @@ Because nothing native is live, Phase 0 (in-place re-encode of legacy paths) shr
 ## 10. Progress (2026-10-03)
 
 Done and verified:
-- `tools/cdn-assets` built (parent repo, branch feat/cdn-assets). 146 assets, 47.9 MB of sources to 2.9 MB. Uploaded to `static/` and `static/_source/`; every new URL returns 200 through the CDN.
-- `vitamins.webp` 404 was a filename typo: the art exists at `vitamin.webp`. Real art now served at both the new path and the legacy `vitamins.webp` path.
-- Real legacy art found for rest (dog, cat), play (dog), scratching, coughing (dog): placeholders replaced. 19 concepts still on placeholders.
-- Clients switched to generated constants, each on `feat/cdn-static-assets` in a worktree, unpushed: fe (`pawjai-fe-wt-cdn`, build + 473 tests pass, 18 dead public files removed, photo downscale before upload), public (`pawjai-public-wt-cdn`, astro check + 71 tests + build pass), RN (`pawjai-react-native-wt-cdn`, typecheck + lint + 1023 tests pass).
-- pawjai-be `feat/storage-hygiene` (`pawjai-be-wt-storage`): owner-scoped layout, scoped deletes (closes the cross-user delete), replace-deletes-old, directory delete on pet/account/blog delete, failed-turn chat cleanup, blog uploads re-encoded. tsc, build:ts, db:validate, 1328 unit tests pass.
+- `tools/cdn-assets` (parent repo, branch feat/cdn-assets): 146 assets, 47.9 MB of sources to 2.9 MB, uploaded to `static/` with originals in `static/_source/`. Every manifest URL returns 200 through the CDN.
+- `vitamins.webp` 404 was a filename typo; the art was at `vitamin.webp`. Real art now at the new path and the legacy `vitamins.webp` path.
+- Real legacy art found for rest (dog, cat), play (dog), scratching, coughing (dog). 19 concepts still on placeholders, which live under `static/placeholders/` so real art arrives at a new URL (browsers cache ~296 days).
+- Clients on `feat/cdn-static-assets` worktrees, unpushed: fe (`pawjai-fe-wt-cdn`: build, tsc, 473 tests pass; 18 dead public files removed; photo downscale before upload), public (`pawjai-public-wt-cdn`: astro check, 71 tests, build pass), RN (`pawjai-react-native-wt-cdn`: typecheck, lint, 1023 tests pass).
+- pawjai-be `feat/storage-hygiene` (`pawjai-be-wt-storage`, 2 commits): owner-scoped layout; scoped deletes close the cross-user delete; avatar upload deletes the old file; pet, account and blog deletes sweep directories with a by-URL fallback; failed chat turns delete their uploads; blog uploads re-encoded (EXIF stripped). tsc, build:ts, db:validate, 1331 unit tests pass; full Docker suite has no new failures vs origin/staging (43 pre-existing: JWT, breeds, migration 0130).
 
-Waiting on the owner:
-- Edge cache purge for 4 overwritten URLs (needs Bunny account API key or dashboard).
-- Bunny directory delete verified only in unit tests, not live (needs an approved test delete).
-- DB: `scripts/migrate-record-type-icons.ts` dry run against staging, then prod (needs DB approval).
-- Existing user photos stay on the legacy layout; moving them needs a DB-writing migration (not written; optional, deletes already cover both layouts).
-- Self-service "delete account" only soft-deletes and keeps photos forever: product/privacy decision.
-- `scripts/hard-delete-user.ts` was already broken on staging (imports dropped tables `admin_emails`, `user_personalization`): separate fix.
+Waiting on the owner (see final report for the approval batch):
+- Purge 4 overwritten URLs at the edge before any client ships.
+- Live check that Bunny directory delete is recursive (unit-tested only).
+- Delete 19 stale placeholder files at future real-art paths under `static/records/`.
+- DB: icon migration dry run (staging, then prod), and a prod read for the orphan report.
+- Self-service delete-account policy; chat image retention policy.
+- `scripts/hard-delete-user.ts` already broken on staging (dropped tables `admin_emails`, `user_personalization`): separate fix.
+
+Deploy order: purge, then be, then clients (fe, public, RN), then icon migration on staging and prod. Run the icon migration before anyone re-runs the catalog rollout: its dry run now plans one routine-checkup write until rows are on static/.
