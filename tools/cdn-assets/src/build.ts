@@ -2,6 +2,8 @@
 // out/build-report.json. Pure local step: no network, no Bunny writes.
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, extname, join } from "node:path";
+import { execFileSync } from "node:child_process";
+import { tmpdir } from "node:os";
 import sharp from "sharp";
 import { ASSETS, type Asset } from "./manifest";
 import { assertManifest, OUT_DIR, resolveSource, SIZE_RULES } from "./lib";
@@ -35,6 +37,18 @@ async function render(asset: Asset): Promise<{ buf: Buffer; row: Omit<ReportRow,
   if (asset.size === "copy") {
     if (extname(src.path).toLowerCase() !== extname(asset.to)) throw new Error(`copy class needs same extension: ${asset.to}`);
     return { buf: input, row: { ...base, bytes: input.length } };
+  }
+
+  if (asset.size === "audio") {
+    // MP3 decodes everywhere decodeAudioData runs (incl. Safari). -vn drops
+    // embedded cover art; -map_metadata -1 strips tags.
+    // Write to a file, not a pipe: ffmpeg can only add the Xing/LAME header
+    // (accurate duration, gapless trim) to a seekable output.
+    const tmp = join(tmpdir(), `cdn-assets-${process.pid}.mp3`);
+    execFileSync("ffmpeg", ["-v", "error", "-y", "-i", src.path, "-vn", "-map_metadata", "-1", "-codec:a", "libmp3lame", "-q:a", "4", tmp]);
+    const out = readFileSync(tmp);
+    rmSync(tmp);
+    return { buf: out, row: { ...base, bytes: out.length } };
   }
 
   // Raster-in-SVG wrappers render at 3x their viewBox; everything else decodes directly.
