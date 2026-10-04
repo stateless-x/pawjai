@@ -33,6 +33,11 @@
 
 ## Verified state as of 2026-08-17 (every line checked against git/gh this session)
 
+> **Superseded.** v1.9.0 (chat trust batch) shipped 2026-08-20, parent repo now at `7112e18`.
+> The table below is frozen at the 2026-08-17 v1.8.0 snapshot and is historical only — do not
+> read it as current SHAs/versions. See memory `project_pawjai_release_1_9_0` for the v1.9.0
+> release record.
+
 | Repo | Prod | Staging | Delta | Version | Tag |
 |---|---|---|---|---|---|
 | pawjai-be | `b42c14af` (master) | `b42c14af` (synced) | 0/0 | 1.8.0 follow-up (docs only) | `v1.8.0` stays at `ab8e022` — no bump, no new tag |
