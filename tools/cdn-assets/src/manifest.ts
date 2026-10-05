@@ -29,6 +29,7 @@ export type SizeClass =
   | "banner" // tall mobile banners
   | "bannerWide" // wide desktop banners
   | "logo"
+  | "audio" // UI sound effects, transcoded to MP3 (ffmpeg)
   | "copy"; // byte-for-byte (true SVG, webm)
 
 export interface Asset {
@@ -269,4 +270,21 @@ export const ASSETS: Asset[] = [
   { to: "static/ads/partners/feliway/feliway.webp", size: "art", file: "pawjai-fe/public/ads/feliway-ads.png", keys: ["AD_IMAGES.partners.feliway"] },
   { to: "static/ads/partners/kong/kong-classic.webp", size: "iconLg", file: "pawjai-fe/public/ads/kong-ads-2.png", keys: ["AD_IMAGES.partners.kongClassic"] },
   { to: "static/ads/partners/gentle-paw/dental-chew.webp", size: "iconLg", file: "pawjai-fe/public/ads/gentle-paw-dental-chew.png", keys: ["AD_IMAGES.partners.gentlePawDentalChew"] },
+
+  // audio: UI sound effects (pawjai-fe lib/utils/sound.ts)
+  ...(
+    [
+      ["select-1", "select1"],
+      ["select-2", "select2"],
+      ["select-3", "select3"],
+      ["keyboard", "keyboard"],
+      ["long-pop", "longPop"],
+      ["confirm", "confirm"],
+    ] as const
+  ).map(([name, key]): Asset => ({
+    to: `static/audio/${name}.mp3`,
+    size: "audio",
+    file: `pawjai-fe/public/sound-effect/${name}.wav`,
+    keys: [`SOUND_EFFECTS.${key}`],
+  })),
 ];

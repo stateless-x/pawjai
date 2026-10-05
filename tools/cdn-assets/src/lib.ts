@@ -21,6 +21,7 @@ export const SIZE_RULES: Record<SizeClass, { max: number | null; quality: number
   banner: { max: 1600, quality: 82 },
   bannerWide: { max: 2432, quality: 82 },
   logo: { max: 768, quality: 85 },
+  audio: { max: null, quality: 0 },
   copy: { max: null, quality: 0 },
 };
 
@@ -64,7 +65,7 @@ export function assertManifest(): void {
       if (seen.has(p)) throw new Error(`duplicate storage path ${p}`);
       seen.set(p, a.to);
     }
-    if (!/^static\/[a-z0-9/-]+\.(webp|svg|webm)$/.test(a.to)) throw new Error(`bad path ${a.to}: lowercase kebab under static/ only`);
+    if (!/^static\/[a-z0-9/-]+\.(webp|svg|webm|mp3)$/.test(a.to)) throw new Error(`bad path ${a.to}: lowercase kebab under static/ only`);
     for (const k of a.keys ?? []) {
       if (keys.has(k)) throw new Error(`duplicate key ${k}`);
       keys.add(k);

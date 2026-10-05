@@ -1,6 +1,8 @@
-# PRICING-MODEL PREP — ROUND 1 packet — **ON HOLD (user deferred 2026-08-16)**
+# PRICING-MODEL PREP — ROUND 1 packet — **SUPERSEDED 2026-10-02**
 
-Status: written and decision-complete, deliberately NOT relayed yet — the user wants to finish smaller items first. When ready, relay the packet below verbatim. The two product decisions inside (daily-limit repurposed as abuse control for the paid+trial model; share-token DB-authority + revocation + lapse policy) were settled between the user and the orchestrator on 2026-08-16 and the packet is their record — re-confirm with the user only if significant time has passed or the pricing plan changed.
+> **Superseded 2026-10-02:** Pawjai no longer has a free tier or multi-tier billing. Current offer is a single Pawjai Premium plan (no trial); pricing is intro-first-month on monthly (79 THB / 3.99 USD, renews 199 / 9.99 USD), quarterly (499 / 24.99), yearly (1790 / 79.99). Canon: pawjai-public/src/lib/subscription/pricing.ts. The decisions below (daily-limit as abuse control, share-token revocation) remain valid but their context is outdated.
+
+**Original status:** Status: written and decision-complete, deliberately NOT relayed yet — the user wants to finish smaller items first. When ready, relay the packet below verbatim. The two product decisions inside (daily-limit repurposed as abuse control for the paid+trial model; share-token DB-authority + revocation + lapse policy) were settled between the user and the orchestrator on 2026-08-16 and the packet is their record — re-confirm with the user only if significant time has passed or the pricing plan changed.
 
 ---
 
